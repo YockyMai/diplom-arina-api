@@ -25,7 +25,7 @@ class appointmentController {
 
       const appointment = await Appointment.findAll({
         where: { userId: id },
-        include: [User, Service],
+        include: [User, { model: Service, include: User }],
       });
 
       return res.json(appointment);
@@ -41,7 +41,7 @@ class appointmentController {
 
       const appointment = await Appointment.findAll({
         where: { serviceId: service.id },
-        include: User,
+        include: [User, { model: Service, include: User }],
       });
 
       return res.json(appointment);

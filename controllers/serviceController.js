@@ -26,6 +26,33 @@ class serviceController {
     }
   }
 
+  async edit(req, res, next) {
+    try {
+      const { serviceId, masterId, description, price, name } = req.body;
+
+      const services = await Service.update(
+        { name, userId: masterId, description, price },
+        { where: { id: serviceId } }
+      );
+      return res.json(services);
+    } catch (error) {
+      next(apiError.badRequest(error.message));
+      console.log(error);
+    }
+  }
+
+  async delete(req, res, next) {
+    try {
+      const { serviceId } = req.params;
+
+      await Service.destroy({ where: { id: serviceId } });
+      return res.json({ message: "Успешно" });
+    } catch (error) {
+      next(apiError.badRequest(error.message));
+      console.log(error);
+    }
+  }
+
   async getAll(req, res, next) {
     try {
       const services = await Service.findAll({

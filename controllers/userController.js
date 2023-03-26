@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 
 const apiError = require("../error/apiError");
 const { User } = require("../models/models");
@@ -16,8 +17,6 @@ const generateJwt = (id, email, role, username) => {
     { expiresIn: "24h" }
   );
 };
-
-const decodeJwt = () => {};
 
 class userController {
   async registration(req, res, next) {
@@ -73,7 +72,53 @@ class userController {
     return res.json({ token });
   }
 
-  async check(req, res, next) {
+  async findUsers(req, res) {
+    const users = await User.findAll({
+      where: {
+        role: "USER",
+      },
+    });
+
+    return res.json({ users });
+  }
+
+  async findMasters(req, res) {
+    const users = await User.findAll({
+      where: {
+        role: "MASTER",
+      },
+    });
+
+    return res.json({ users });
+  }
+  async findAllUsers(req, res) {
+    const users = await User.findAll({
+      where: {
+        role: {
+          [Op.not]: "ADMIN",
+        },
+      },
+    });
+
+    return res.json({ users });
+  }
+
+  async changeRole(req, res) {
+    const { id, role } = req.body;
+
+    const users = await User.update(
+      { role },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+
+    return res.json({ users });
+  }
+
+  async check(req, res) {
     const token = generateJwt(
       req.user.id,
       req.user.email,
