@@ -5,6 +5,7 @@ const checkRoleMiddleware = require("../middleware/checkRoleMiddleware");
 const router = new Router();
 
 router.post("/create", authMiddleware, appointmentController.create);
+router.post("/cancel", authMiddleware, appointmentController.cancel);
 router.get(
   "/getAllForUser",
   authMiddleware,

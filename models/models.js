@@ -7,6 +7,10 @@ const User = sequelize.define("user", {
   password: { type: DataTypes.STRING, allowNull: false },
   username: { type: DataTypes.STRING, allowNull: false },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
+  phone: {
+    type: DataTypes.NUMBER,
+    defaultValue: "+7 (999) 999 99-99",
+  },
 });
 
 const Service = sequelize.define("service", {
@@ -22,6 +26,7 @@ const Appointment = sequelize.define(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     date: { type: DataTypes.DATE, require: true },
+    canceled: { type: DataTypes.INTEGER, require: true, defaultValue: 0 },
   },
   {
     timestamps: true,

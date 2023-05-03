@@ -21,10 +21,10 @@ const generateJwt = (id, email, role, username) => {
 class userController {
   async registration(req, res, next) {
     try {
-      const { email, password, role, username } = req.body;
+      const { email, password, role, username, phone } = req.body;
 
-      if (!email || !password || !username) {
-        return next(apiError.badRequest("Неверный логин или пароль"));
+      if (!email || !password || !username || !phone) {
+        return next(apiError.badRequest("Ошибка валидации"));
       }
 
       const candidate = await User.findOne({ where: { email } });
@@ -42,9 +42,16 @@ class userController {
         role,
         username,
         password: hashPassowrd,
+        phone,
       });
 
-      const token = generateJwt(user.id, user.email, user.role, user.username);
+      const token = generateJwt(
+        user.id,
+        user.email,
+        user.role,
+        user.username,
+        user.phone
+      );
 
       return res.json({
         token,
@@ -67,7 +74,13 @@ class userController {
       return next(apiError.internal("Неверный email или пароль"));
     }
 
-    const token = generateJwt(user.id, user.email, user.role, user.username);
+    const token = generateJwt(
+      user.id,
+      user.email,
+      user.role,
+      user.username,
+      user.phone
+    );
 
     return res.json({ token });
   }

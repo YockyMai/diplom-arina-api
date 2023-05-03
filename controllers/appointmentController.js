@@ -11,11 +11,31 @@ class appointmentController {
       if (candidate)
         return res.status(400).json({ message: "Это время занято" });
 
-      const appointment = await Appointment.create({ userId, serviceId, date });
+      const appointment = await Appointment.create({
+        userId,
+        serviceId,
+        date,
+      });
 
       return res.json(appointment);
     } catch (error) {
+      console.log(error);
       next(apiError(400, "Не удалось вас записать"));
+    }
+  }
+
+  async cancel(req, res, next) {
+    try {
+      const { appointmentId } = req.body;
+
+      const appointment = await Appointment.findByPk(appointmentId);
+
+      appointment.canceled = true;
+      appointment.save();
+
+      return res.json(appointment);
+    } catch (error) {
+      next(apiError(400, "Не отменить услугу"));
     }
   }
 
