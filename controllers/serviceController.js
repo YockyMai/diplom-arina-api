@@ -1,4 +1,4 @@
-const { Service, User } = require("../models/models");
+const { Service, User, Appointment } = require("../models/models");
 const { v4: uuidv4 } = require("uuid");
 const apiError = require("../error/apiError");
 const path = require("path");
@@ -45,7 +45,10 @@ class serviceController {
     try {
       const { serviceId } = req.params;
 
-      await Service.destroy({ where: { id: serviceId } });
+      await Appointment.destroy({ where: { serviceId } });
+      await Service.destroy({
+        where: { id: serviceId },
+      });
       return res.json({ message: "Успешно" });
     } catch (error) {
       next(apiError.badRequest(error.message));
