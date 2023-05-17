@@ -65,6 +65,7 @@ class calendarController {
   }
 
   async fillCalendarEveryday(req, res) {
+    res.send("Автоматическое обновление расписания началось");
     cron.schedule("0 0 */24 * * *", async () => {
       try {
         const calendars = await Calendar.findAll();
@@ -94,11 +95,11 @@ class calendarController {
       } catch (err) {
         console.error("Error deleting records:", err);
       }
-      res.send("Автоматическое обновление расписания началось");
     });
   }
 
   async deletePastDates(req, res) {
+    res.send("Автоматическое удаление расписания началось");
     cron.schedule("*/15 * * * *", async () => {
       try {
         const days = await Days.findAll();
@@ -110,14 +111,12 @@ class calendarController {
           ) {
             await Times.destroy({ where: { dayId: dayObj.id } });
             await Days.destroy({ where: { id: dayObj.id } });
+            console.log("Удалены записи из расписания");
           }
         });
-
-        console.log("Удалены записи из расписания");
       } catch (err) {
         console.error("Error deleting records:", err);
       }
-      res.send("Автоматическое удаление расписания началось");
     });
   }
 }
