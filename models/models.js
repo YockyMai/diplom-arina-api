@@ -13,6 +13,20 @@ const User = sequelize.define("user", {
   },
 });
 
+const Calendar = sequelize.define("calendar", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+});
+
+const Days = sequelize.define("days", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  day: { type: DataTypes.DATE, allowNull: false },
+});
+
+const Times = sequelize.define("times", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  time: { type: DataTypes.STRING, allowNull: false },
+});
+
 const Service = sequelize.define("service", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, allowNull: false },
@@ -42,8 +56,20 @@ Appointment.belongsTo(Service);
 User.hasMany(Service);
 Service.belongsTo(User);
 
+Service.hasMany(Calendar);
+Calendar.belongsTo(Service);
+
+Calendar.hasMany(Days);
+Days.belongsTo(Calendar);
+
+Days.hasMany(Times);
+Times.belongsTo(Days);
+
 module.exports = {
   User,
   Service,
   Appointment,
+  Calendar,
+  Times,
+  Days,
 };
