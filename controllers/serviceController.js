@@ -1,4 +1,11 @@
-const { Service, User, Appointment } = require("../models/models");
+const {
+  Service,
+  User,
+  Appointment,
+  Calendar,
+  Days,
+  Times,
+} = require("../models/models");
 const { v4: uuidv4 } = require("uuid");
 const apiError = require("../error/apiError");
 const path = require("path");
@@ -18,6 +25,40 @@ class serviceController {
         description,
         img: fileName,
         userId: master_id,
+      });
+
+      const calendar = await Calendar.create({ serviceId: service.id });
+
+      // Определение текущей даты
+      const currentDate = new Date();
+
+      // Определение последнего дня месяца
+      const lastDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0
+      );
+
+      // Создание массива объектов для заполнения таблицы "days"
+      const daysToCreate = [];
+      let currentDateToAdd = currentDate;
+
+      while (currentDateToAdd <= lastDayOfMonth) {
+        daysToCreate.push({
+          day: new Date(currentDateToAdd),
+          calendarId: calendar.id,
+        });
+        currentDateToAdd.setDate(currentDateToAdd.getDate() + 1);
+      }
+
+      console.log(daysToCreate);
+
+      const days = await Days.bulkCreate(daysToCreate);
+
+      days.forEach((day) => {
+        timesData.forEach(async ({ time }) => {
+          await Times.create({ time, dayId: day.id });
+        });
       });
 
       return res.json(service);
@@ -59,7 +100,13 @@ class serviceController {
   async getAll(req, res, next) {
     try {
       const services = await Service.findAll({
-        include: { model: User },
+        include: [
+          { model: User },
+          {
+            model: Calendar,
+            include: [{ model: Days, include: { model: Times } }],
+          },
+        ],
       });
       return res.json(services);
     } catch (error) {
@@ -76,7 +123,13 @@ class serviceController {
         where: {
           id,
         },
-        include: { model: User },
+        include: [
+          { model: User },
+          {
+            model: Calendar,
+            include: [{ model: Days, include: { model: Times } }],
+          },
+        ],
       });
       return res.json(services);
     } catch (error) {

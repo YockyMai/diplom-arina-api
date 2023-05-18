@@ -1,21 +1,24 @@
 const apiError = require("../error/apiError");
-const { Appointment, Service, User } = require("../models/models");
+const { Appointment, Service, User, Times, Days } = require("../models/models");
 
 class appointmentController {
   async create(req, res, next) {
     try {
-      const { serviceId, date, userId } = req.body;
+      const { serviceId, userId, dayId, timeId } = req.body;
 
-      const candidate = await Appointment.findOne({ where: { date, userId } });
+      const dayCandidate = await Days.findOne({ where: { id: dayId } });
+      const timeCandidate = await Times.findOne({ where: { id: timeId } });
 
-      if (candidate)
+      if (!dayCandidate || !timeCandidate)
         return res.status(400).json({ message: "Это время занято" });
 
       const appointment = await Appointment.create({
         userId,
         serviceId,
-        date,
+        date: new Date(),
       });
+
+      await Times.destroy({ where: { id: timeId, dayId } });
 
       return res.json(appointment);
     } catch (error) {
