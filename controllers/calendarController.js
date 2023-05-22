@@ -66,7 +66,7 @@ class calendarController {
 
   async fillCalendarEveryday(req, res) {
     res.send("Автоматическое обновление расписания началось");
-    cron.schedule("0 0 */24 * * *", async () => {
+    cron.schedule("*/15 * * * *", async () => {
       try {
         const calendars = await Calendar.findAll();
 

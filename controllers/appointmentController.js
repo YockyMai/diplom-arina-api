@@ -12,10 +12,15 @@ class appointmentController {
       if (!dayCandidate || !timeCandidate)
         return res.status(400).json({ message: "Это время занято" });
 
+      const date = dayCandidate.day
+
+      const time = Number(timeCandidate.time.replace(":00", ''))
+      date.setHours(time)
+
       const appointment = await Appointment.create({
         userId,
         serviceId,
-        date: new Date(),
+        date,
       });
 
       await Times.destroy({ where: { id: timeId, dayId } });
