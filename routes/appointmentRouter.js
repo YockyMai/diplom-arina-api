@@ -19,15 +19,18 @@ router.get(
   appointmentController.getAllForMaster
 );
 router.get("/start-task", (req, res) => {
-  cron.schedule("*/15 * * * * *", async () => {
+  cron.schedule("*/30 * * * * *", async () => {
     try {
-      await Appointment.destroy({
-        where: {
-          date: {
-            [Sequelize.Op.lt]: new Date(),
+      await Appointment.update(
+        { canceled: true },
+        {
+          where: {
+            date: {
+              [Sequelize.Op.lt]: new Date(),
+            },
           },
-        },
-      });
+        }
+      );
       console.log("Records deleted successfully!");
     } catch (err) {
       console.error("Error deleting records:", err);

@@ -66,7 +66,7 @@ class calendarController {
 
   async fillCalendarEveryday(req, res) {
     res.send("Автоматическое обновление расписания началось");
-    cron.schedule("*/15 * * * *", async () => {
+    cron.schedule("*/30 * * * * *", async () => {
       try {
         const calendars = await Calendar.findAll();
 
@@ -100,7 +100,7 @@ class calendarController {
 
   async deletePastDates(req, res) {
     res.send("Автоматическое удаление расписания началось");
-    cron.schedule("*/15 * * * *", async () => {
+    cron.schedule("*/30 * * * * *", async () => {
       try {
         const days = await Days.findAll();
 

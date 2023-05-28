@@ -67,8 +67,6 @@ class serviceController {
         currentDateToAdd.setDate(currentDateToAdd.getDate() + 1);
       }
 
-      console.log(daysToCreate);
-
       const days = await Days.bulkCreate(daysToCreate);
 
       days.forEach((day) => {
