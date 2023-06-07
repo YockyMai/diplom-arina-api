@@ -11,5 +11,6 @@ router.get("/findUsers", userController.findUsers);
 router.get("/findMasters", userController.findMasters);
 router.get("/findAll", userController.findAllUsers);
 router.post("/changeRole", userController.changeRole);
+router.post("/editUser", userController.editUser);
 
 module.exports = router;

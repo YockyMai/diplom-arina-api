@@ -9,6 +9,7 @@ const {
 const { v4: uuidv4 } = require("uuid");
 const apiError = require("../error/apiError");
 const path = require("path");
+const Sequelize = require("sequelize");
 
 const timesData = [
   { time: "9:00" },
@@ -23,13 +24,12 @@ const timesData = [
   { time: "18:00" },
   { time: "19:00" },
   { time: "20:00" },
-  { time: "21:00" },
 ];
 
 class serviceController {
   async create(req, res, next) {
     try {
-      const { name, price, description, master_id } = req.body;
+      const { name, price, description, master_id, category } = req.body;
       const { img } = req.files;
 
       let fileName = uuidv4() + ".jpg"; // generate uniq filename
@@ -41,6 +41,7 @@ class serviceController {
         description,
         img: fileName,
         userId: master_id,
+        category,
       });
 
       const calendar = await Calendar.create({ serviceId: service.id });
@@ -83,10 +84,11 @@ class serviceController {
 
   async edit(req, res, next) {
     try {
-      const { serviceId, masterId, description, price, name } = req.body;
+      const { serviceId, masterId, description, price, name, category } =
+        req.body;
 
       const services = await Service.update(
-        { name, userId: masterId, description, price },
+        { name, userId: masterId, description, price, category },
         { where: { id: serviceId } }
       );
       return res.json(services);
@@ -113,12 +115,20 @@ class serviceController {
 
   async getAll(req, res, next) {
     try {
+      const { category } = req.params;
+
       const services = await Service.findAll({
+        ...(category && { where: { category } }),
         include: [
           { model: User },
           {
             model: Calendar,
-            include: [{ model: Days, include: { model: Times } }],
+            include: [
+              {
+                model: Days,
+                include: { model: Times },
+              },
+            ],
           },
         ],
       });
@@ -141,7 +151,11 @@ class serviceController {
           { model: User },
           {
             model: Calendar,
-            include: [{ model: Days, include: { model: Times } }],
+            include: {
+              model: Days,
+              order: [["day", "DESC"]],
+              include: { model: Times, order: ["time", "DESC"] },
+            },
           },
         ],
       });

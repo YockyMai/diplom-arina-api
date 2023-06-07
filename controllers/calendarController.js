@@ -15,7 +15,6 @@ const timesData = [
   { time: "18:00" },
   { time: "19:00" },
   { time: "20:00" },
-  { time: "21:00" },
 ];
 
 class calendarController {

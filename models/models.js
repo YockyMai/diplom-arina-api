@@ -33,6 +33,7 @@ const Service = sequelize.define("service", {
   price: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.TEXT },
   img: { type: DataTypes.STRING, allowNull: false },
+  category: { type: DataTypes.STRING, allowNull: false },
 });
 
 const Appointment = sequelize.define(

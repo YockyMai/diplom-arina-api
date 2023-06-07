@@ -5,13 +5,14 @@ const { Op } = require("sequelize");
 const apiError = require("../error/apiError");
 const { User } = require("../models/models");
 
-const generateJwt = (id, email, role, username) => {
+const generateJwt = (id, email, role, username, phone) => {
   return jwt.sign(
     {
       id,
       email,
       role,
       username,
+      phone,
     },
     process.env.JWT_SECRET_KEY,
     { expiresIn: "24h" }
@@ -131,12 +132,34 @@ class userController {
     return res.json({ users });
   }
 
+  async editUser(req, res) {
+    try {
+      const { phone, email, id } = req.body;
+
+      const user = await User.update(
+        { phone, email },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      return res.json({ user });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async check(req, res) {
+    const user = await User.findOne({ where: { id: req.user.id } });
+
     const token = generateJwt(
-      req.user.id,
-      req.user.email,
-      req.user.role,
-      req.user.username
+      user.id,
+      user.email,
+      user.role,
+      user.username,
+      user.phone
     );
 
     return res.json(token);
