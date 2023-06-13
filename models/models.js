@@ -42,6 +42,7 @@ const Appointment = sequelize.define(
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     date: { type: DataTypes.DATE, require: true },
     canceled: { type: DataTypes.INTEGER, require: true, defaultValue: 0 },
+    dayId: { type: DataTypes.INTEGER, require: true },
   },
   {
     timestamps: true,

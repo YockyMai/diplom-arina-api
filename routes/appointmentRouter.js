@@ -22,7 +22,7 @@ router.get("/start-task", (req, res) => {
   cron.schedule("*/30 * * * * *", async () => {
     try {
       await Appointment.update(
-        { canceled: true },
+        { canceled: 1 },
         {
           where: {
             date: {
@@ -31,7 +31,6 @@ router.get("/start-task", (req, res) => {
           },
         }
       );
-      console.log("Records deleted successfully!");
     } catch (err) {
       console.error("Error deleting records:", err);
     }
