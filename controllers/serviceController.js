@@ -119,18 +119,6 @@ class serviceController {
 
       const services = await Service.findAll({
         ...(category && { where: { category } }),
-        include: [
-          { model: User },
-          {
-            model: Calendar,
-            include: [
-              {
-                model: Days,
-                include: { model: Times },
-              },
-            ],
-          },
-        ],
       });
       return res.json(services);
     } catch (error) {
